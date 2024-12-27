@@ -3,6 +3,14 @@
 import requests
 import json
 from tabulate import tabulate
+import RPi.GPIO as GPIO
+import time
+
+VICTORIA_PIN = 13
+PIMLICO_PIN = 11
+VAUXHALL_PIN = 7
+STOCKWELL_PIN = 5
+BRIXTON_PIN = 3
 
 STATIONS = [
 'Walthamstow Central Underground Station',
@@ -276,12 +284,52 @@ def create_table(n,s):
     table = tabulate(table_rows, headers, tablefmt='rounded_grid')
     return table
 
+def setup_leds():
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(VICTORIA_PIN, GPIO.OUT)
+    GPIO.setup(PIMLICO_PIN, GPIO.OUT)
+    GPIO.setup(VAUXHALL_PIN, GPIO.OUT)
+    GPIO.setup(STOCKWELL_PIN, GPIO.OUT)
+    GPIO.setup(BRIXTON_PIN, GPIO.OUT)
+
+
+def led(pin, on):
+    GPIO.output(pin, GPIO.HIGH if on else GPIO.LOW)
+
+def set_station_led(pin, status):
+    in_station = status != ''
+    led(pin, in_station)
+
 def main():
     trains = get_victoria_line_trains()
 
-if __name__ == '__main__':
+def harriet_show_lines():
     n, s = get_station_dictionaries()
     n = sort_dictionary(n)
     s = sort_dictionary(s)
     print(create_table(n,s))
+
+if __name__ == '__main__':
+    setup_leds()
+    # harriet_show_lines()
+
+    while True:
+        n, s = get_station_dictionaries()
+        n = sort_dictionary(n)
+        s = sort_dictionary(s)
+        print(create_table(n,s))
+
+        # brixton_train = n['28'] != '' or s['28'] != ''
+        # brixton_train = n['28'] != ''
+        # print(f'{brixton_train}')
+        # led(BRIXTON_PIN, brixton_train)
+
+        set_station_led(VICTORIA_PIN, n['22'])
+        set_station_led(PIMLICO_PIN, n['24'])
+        set_station_led(VAUXHALL_PIN, n['26'])
+        set_station_led(STOCKWELL_PIN, n['28'])
+        set_station_led(BRIXTON_PIN, n['30'])
+        time.sleep(10)
+
+
 
