@@ -1,0 +1,22 @@
+
+## Departure Board Code
+
+http://www.railwaycodes.org.uk/underground/stations.shtm
+
+
+Walthamstow Central	WAL
+Blackhorse Road	BHR
+Tottenham Hale	TTH	
+Seven Sisters	SVS
+Finsbury Park	FPK
+Highbury & Islington	HBY
+King's Cross St. Pancras	KXX
+Euston	EUS
+Warren Street	WST
+Oxford Circus	OXC 
+Green Park	GPK
+Victoria	VIC
+Pimlico	PIM
+Vauxhall	VUX
+Stockwell	STK
+Brixton	BRX

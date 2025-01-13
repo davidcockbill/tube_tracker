@@ -1,8 +1,12 @@
 #!/usr/bin/python3
 
-import requests
+import urequests
+import network
+import time
+import ujson
 from station_locator import locate, get_location, Direction, TRAIN_LOCATIONS
 from wifi_config import WIFI_SSID, WIFI_PASSWORD
+
 
 NAPTANS = {
     'walthamstow': '940GZZLUWWL',
@@ -11,11 +15,36 @@ NAPTANS = {
     }
 
 
+def wifi():
+    last_timestamp = time.ticks_ms()
+
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+
+    wlan.connect(WIFI_SSID, WIFI_PASSWORD)
+
+    connection_check_duration = 500
+    retry = 0
+    while True:
+        timestamp = time.ticks_ms()
+        if timestamp - last_timestamp > connection_check_duration:
+            last_timestamp = timestamp
+            if wlan.isconnected:
+                break
+            print(f'[{retry}] Waiting for wifi connection...')
+
+        time.sleep(0.1)
+        retry += 1
+
+    network_info = wlan.ifconfig()
+    print(f"Connected: {network_info}")
+
+
 def request_data(url):
     try:
-        response = requests.get(url)
-        response.raise_for_status()
-        return response.json()
+        response = urequests.get(url)
+        print(f'status_code={response.status_code}')
+        return ujson.loads(response.text)
     except Exception as e:
         print(f'Error fetching data: {e}')
     
@@ -72,8 +101,9 @@ def print_located_trains(located_trains):
 
 
 if __name__ == '__main__':
+    print(f'Starting..')
     northbound_trains = get_victoria_line_trains('walthamstow')
-    southbound_trains = get_victoria_line_trains('brixton')
+    #southbound_trains = get_victoria_line_trains('brixton')
     
     # print('NORTHBOUND:')
     # print_trains(northbound_trains)
@@ -82,7 +112,5 @@ if __name__ == '__main__':
 
     located_trains = locate_trains(northbound_trains, Direction.NORTHBOUND)
     print_located_trains(located_trains)
-
-
 
 
