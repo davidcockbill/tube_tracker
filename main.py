@@ -73,8 +73,6 @@ def print_trains(trains):
         current_location = train['currentLocation']
         platform_name = train['platformName']
         print(f'[{vehicle_id}] {current_location}, platform={platform_name}')
-        # print(f'{train}')
-        # print('')
 
 
 def locate_trains(trains, direction):

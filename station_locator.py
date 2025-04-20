@@ -107,8 +107,9 @@ def get_location(location_number):
 
 
 def get_station_code(station_name):
-    return next((k for k, v in STATION_CODE_LOOKUP.items() if truncate_station_name(v) in station_name), None)
-
+    for k, v in STATION_CODE_LOOKUP.items():
+        if truncate_station_name(v) in station_name:
+            return k
 
 def get_previous_station(station):
     stations = [station for station in STATIONS]
@@ -170,6 +171,8 @@ def at_matcher(direction, current_location):
     
 
 def locate(direction, current_location):
+    print(f'current_location={current_location}')
+
     location_number = between_matcher(current_location)
     if location_number is not None:
         return location_number
@@ -212,9 +215,3 @@ if __name__ == '__main__':
 
     location_number = locate(Direction.SOUTHBOUND, 'Departing Stockwell')
     print(f'{location_number}')
-    
-
-    
-
-
-
